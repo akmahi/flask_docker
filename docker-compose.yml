@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+    web:
+        build: 
+            context: .
+        command: flask run --host=0.0.0.0 --port=5000
+        ports:
+            - 5000:5000
+        environment:
+            - FLASK_APP=manage.py
+        depends_on:
+            - db
+        environment:
+            - HOST=db
+            - USER=postgres
+            - PASSWORD=postgrespw
+            - DB=emp
+        links:
+            - db
+        networks:
+            - dock-db-test
+    db:
+        image: postgres:latest
+        container_name: db
+        environment:
+            - POSTGRES_HOST=db
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgrespw
+            - POSTGRES_DB=emp
+        ports:
+            - 32768:5432
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        networks:
+            - dock-db-test
+volumes:
+    pgdata:
+
+networks:
+  dock-db-test:
+    external: false
+    name: dock-db-test
